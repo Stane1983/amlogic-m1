@@ -50,8 +50,20 @@ typedef struct {
 #define FREESCALE_CANVAS_INDEX 0x70   //for osd&video scale use
 #define MAX_FREESCALE_CANVAS_INDEX 0x7f
 
+#define DI_USE_FIXED_CANVAS_IDX
+#ifdef DI_USE_FIXED_CANVAS_IDX
+#define DI_PRE_MEM_NR_CANVAS_IDX        0x70
+#define DI_PRE_CHAN2_NR_CANVAS_IDX      0x71
+#define DI_PRE_WR_NR_CANVAS_IDX         0x72
+#define DI_PRE_WR_MTN_CANVAS_IDX        0x73
+#define DI_POST_BUF0_CANVAS_IDX         0x74
+#define DI_POST_BUF1_CANVAS_IDX         0x75
+#define DI_POST_MTNCRD_CANVAS_IDX       0x76
+#define DI_POST_MTNPRD_CANVAS_IDX       0x77
+#else
 #define DEINTERLACE_CANVAS_BASE_INDEX	0x70
 #define DEINTERLACE_CANVAS_MAX_INDEX	0x7f
+#endif
 
 extern void canvas_config(u32 index, ulong addr, u32 width,
                           u32 height, u32 wrap, u32 blkmode);

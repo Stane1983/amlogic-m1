@@ -82,6 +82,7 @@ static int cur_out_format=GE2D_FORMAT_S24_BGR;
 
 static spinlock_t lock = SPIN_LOCK_UNLOCKED;
 static bool ppmgr_blocking = false;
+static int video_vf_lock = 0;
 static bool ppmgr_inited = false;
 
 static struct ppframe_s vfp_pool[VF_POOL_SIZE];
@@ -125,19 +126,27 @@ static int q_free_set = 0 ;
 static vframe_t *ppmgr_vf_peek(void)
 {
     vframe_t* vf;
+    if(video_vf_lock){
+    	return NULL;	
+    }   
     vf= 	vfq_peek(&q_ready);
    return vf;
 }
 
 static vframe_t *ppmgr_vf_get(void)
 {
+    if(video_vf_lock){
+    	return NULL;	
+    }	
     return vfq_pop(&q_ready);
 }
 
 static void ppmgr_vf_put(vframe_t *vf)
 {
     ppframe_t *pp_vf = to_ppframe(vf);
-
+    if(video_vf_lock){
+    	return ;	
+    }
     /* the frame is in bypass mode, put the decoder frame */
     if (pp_vf->dec_frame)
         ppmgr_vf_put_dec(pp_vf->dec_frame);
@@ -176,6 +185,8 @@ static int ppmgr_event_cb(int type, void *data, void *private_data)
                 still_picture_notify = 1;
                 up(&thread_sem);
 #endif
+            }else {
+                up(&thread_sem);
             }
         }
     } else if((type & VFRAME_EVENT_RECEIVER_PARAM_SET)) {
@@ -249,18 +260,22 @@ static int ppmgr_receiver_event_fun(int type, void *data, void *private_data)
             case VFRAME_EVENT_PROVIDER_START:
 #ifdef DDD
         printk("register now \n");
-#endif                        
+#endif          
+			video_vf_lock = 0 ;              
             vf_ppmgr_reg_provider();
             break;
             case VFRAME_EVENT_PROVIDER_UNREG:
 #ifdef DDD
         printk("unregister now \n");
 #endif            
+			video_vf_lock = 0 ;
             vf_ppmgr_unreg_provider();
             break;
             case VFRAME_EVENT_PROVIDER_LIGHT_UNREG:
             break;                 
             case VFRAME_EVENT_PROVIDER_RESET       :
+            	video_vf_lock  = 1;
+            	vf_light_unreg_provider(&ppmgr_vf_prov);
             	vf_ppmgr_reset();
             	break;
         default:
@@ -360,6 +375,9 @@ static inline vframe_t *ppmgr_vf_peek_dec(void)
     struct vframe_provider_s *vfp;
     vframe_t *vf;
     vfp = vf_get_provider(RECEIVER_NAME);
+    if(video_vf_lock){
+    	return NULL;	
+    }
     if (!(vfp && vfp->ops && vfp->ops->peek))
         return NULL;
 
@@ -372,7 +390,9 @@ static inline vframe_t *ppmgr_vf_get_dec(void)
 {
     struct vframe_provider_s *vfp;
     vframe_t *vf;
-    unsigned canvas_addr ;
+    if(video_vf_lock){
+    	return NULL;	
+    }
     vfp = vf_get_provider(RECEIVER_NAME);
     if (!(vfp && vfp->ops && vfp->ops->peek))
         return NULL;
@@ -383,6 +403,9 @@ static inline vframe_t *ppmgr_vf_get_dec(void)
 static inline void ppmgr_vf_put_dec(vframe_t *vf)
 {
 	struct vframe_provider_s *vfp;
+	if(video_vf_lock){
+		return;	
+	}
 	vfp = vf_get_provider(RECEIVER_NAME);
 	if (!(vfp && vfp->ops && vfp->ops->peek))
 	return;
@@ -397,7 +420,7 @@ static inline void ppmgr_vf_put_dec(vframe_t *vf)
 *************************************************/
 static void vf_rotate_adjust(vframe_t *vf, vframe_t *new_vf, int angle)
 {
-    int w, h;
+    int w = 0, h = 0;
 
     if (angle & 1) {
         int ar = (vf->ratio_control >> DISP_RATIO_ASPECT_RATIO_BIT) & 0x3ff;
@@ -1807,7 +1830,7 @@ static int ppmgr_task(void *data)
         }
         
         if (ppmgr_blocking) {
-            vf_light_unreg_provider(&ppmgr_vf_prov);
+            //vf_light_unreg_provider(&ppmgr_vf_prov);
             vf_local_init();
             //vf_reg_provider(&ppmgr_vf_prov);
             if(ppmgr_device.video_out==0) {
@@ -1819,6 +1842,7 @@ static int ppmgr_task(void *data)
             }
 #endif
             ppmgr_blocking = false;
+            video_vf_lock  =0 ;
             up(&thread_sem);
             printk("ppmgr rebuild from light-unregister\n");
         }

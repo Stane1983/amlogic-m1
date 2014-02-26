@@ -842,7 +842,7 @@ static ssize_t store_scale_width(struct device *device, struct device_attribute 
 }
 
 static ssize_t show_scale_width(struct device *device, struct device_attribute *attr,
-			 const char *buf)
+			 char *buf)
 {
 	struct fb_info *fb_info = dev_get_drvdata(device);
 	unsigned int free_scale_width=0;
@@ -865,7 +865,7 @@ static ssize_t store_scale_height(struct device *device, struct device_attribute
 }
 
 static ssize_t show_scale_height(struct device *device, struct device_attribute *attr,
-			 const char *buf)
+			 char *buf)
 {
 	struct fb_info *fb_info = dev_get_drvdata(device);
 	unsigned int free_scale_height=0;
@@ -1135,7 +1135,7 @@ static void osd_late_resume(struct early_suspend *h)
 }
 #endif
 
-#ifdef CONFIG_MACH_MESON_8726M_REFC03_ICS
+#ifdef CONFIG_MACH_MESON_STV_MBX_M3 //modifed by clei for resolution CONFIG_MACH_MESON_8726M_REFC03_ICS
 int  __init  get_resolution(char *str)
 {
     if(strncmp("480", str, 3) == 0)
@@ -1244,6 +1244,7 @@ osd_probe(struct platform_device *pdev)
 		osddev_init();
     	}
 	vinfo = get_current_vinfo();
+       
     	for (index=0;index<OSD_COUNT;index++)
     	{
     		//platform resource 
@@ -1293,7 +1294,8 @@ osd_probe(struct platform_device *pdev)
 		 amlog_level(LOG_LEVEL_HIGH,"Frame buffer memory assigned at phy:0x%08x, vir:0x%p, size=%dK\n",
 	    	fbdev->fb_mem_paddr, fbdev->fb_mem_vaddr, fbdev->fb_len >> 10);
 		 
-
+              mydef_var[index].width=vinfo->screen_real_width;
+              mydef_var[index].height=vinfo->screen_real_height;
 		if(init_logo_obj && index==logo_osd_index ) //adjust default var info
 		{
 			int  bpp=init_logo_obj->dev->output_dev.osd.color_depth;//bytes per pixel
