@@ -184,25 +184,42 @@ config MACH_MESON_8726M_REFB18
 	bool "Support M1 8726(P10) platform(machid=2956)"
 	help
 	  Include support for the AMLOGIC M1 8726M Emulation Baseboard platform.
-
+	
 config MACH_MESON_8726M_REFB19
 	select GENERIC_ALLOCATOR
 	bool "Support M1 8726(REFB19) platform(machid=2956)"
 	help
 	  Include support for the AMLOGIC M1 8726M Emulation Baseboard platform.
-	  	  
-config MACH_MESON_8726M_REFB14
+
+config MACH_MESON_STV_MBX_M3
 	select GENERIC_ALLOCATOR
-	bool "Support M1 8726(refb14) platform(machid=2956)"
+	bool "Support M1 8726(stv mbx m3) platform(machid=2957)"
 	help
 	  Include support for the AMLOGIC M1 8726M Emulation Baseboard platform.
-	  
-config MACH_MESON_8726M_REFB16
-	select GENERIC_ALLOCATOR
-	bool "Support M1 8726(refb16) platform(machid=2956)"
+
+config STV
+	bool "support STV mod"
 	help
-	  Include support for the AMLOGIC M1 8726M Emulation Baseboard platform.	  
-	  	  
+		Just for all stv config.
+
+config STV_CHECK
+	bool "support STV board check"
+	help
+		Just for stv board check
+
+config STV_RECOVERY
+	bool "support M3 Recovery system"
+	help
+		Just for M3 Recovery system build. not config for system.
+
+
+config MACH_MESON_STV_MBX_REF
+	select GENERIC_ALLOCATOR
+	bool "Support M1 8726(stv mbx ref) platform(machid=2956)"
+	help
+	  Include support for the AMLOGIC M1 8726M Emulation Baseboard platform.
+
+
 config MESON_CLOCK_TICK_RATE
     int "Clock Tick Rate"
 	default 25000000
