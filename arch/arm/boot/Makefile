@@ -12,7 +12,11 @@
 #
 
 #MKIMAGE         ?= $(CONFIG_SHELL) $(srctree)/scripts/mkuboot.sh
+ifneq ($(CONFIG_STV),y)
 MKIMAGE          ?= $(srctree)/arch/arm/boot/mkimage
+else
+MKIMAGE          ?= $(srctree)/arch/arm/boot/mkimage-genia
+endif
 
 ifneq ($(MACHINE),)
 include $(srctree)/$(MACHINE)/Makefile.boot
