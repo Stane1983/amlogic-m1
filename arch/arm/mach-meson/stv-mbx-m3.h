@@ -30,7 +30,7 @@
 #define B32BpP	(4)
 #define DOUBLE_BUFFER	(2)
 
-#if defined(CONFIG_ANDROID)
+#if !defined(CONFIG_XBMC_BUILD)
 #define OSD1_MAX_MEM		U_ALIGN(OSD_1080_PIX*B32BpP*DOUBLE_BUFFER)
 #define OSD2_MAX_MEM		U_ALIGN(32*32*B32BpP)
 #else

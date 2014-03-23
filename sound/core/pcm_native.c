@@ -599,7 +599,9 @@ int snd_pcm_status(struct snd_pcm_substream *substream,
  _tstamp_end:
 	status->appl_ptr = runtime->control->appl_ptr;
     /* update the extra size, this ex_size will be extract from android side */
+#ifndef CONFIG_XBMC_BUILD
     status->ex_size = runtime->control->ex_size;
+#endif
 
 	status->hw_ptr = runtime->status->hw_ptr;
 	if (substream->stream == SNDRV_PCM_STREAM_PLAYBACK) {

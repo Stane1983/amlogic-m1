@@ -1867,9 +1867,10 @@ static snd_pcm_sframes_t snd_pcm_lib_write1(struct snd_pcm_substream *substream,
 		if (appl_ptr >= runtime->boundary)
 			appl_ptr -= runtime->boundary;
 		runtime->control->appl_ptr = appl_ptr;
+#ifndef CONFIG_XBMC_BUILD
         /* keep the extra size for latency calculation */
         runtime->control->ex_size = size - frames;
-
+#endif
 		if (substream->ops->ack)
 			substream->ops->ack(substream);
 

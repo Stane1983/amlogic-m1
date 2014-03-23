@@ -821,6 +821,11 @@ config ARCH_OMAP
 
 endchoice
 
+config XBMC_BUILD
+	bool "This is kernel for Linux XBMC"
+	depends on ARCH_MESON
+	default n
+
 #
 # This is sorted alphabetically by mach-* pathname.  However, plat-*
 # Kconfigs may be included either alphabetically (according to the
