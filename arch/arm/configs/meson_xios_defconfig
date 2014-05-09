@@ -1111,7 +1111,7 @@ CONFIG_CMEM=m
 #
 # Mali 400 GPU OpenGL device driver
 #
-CONFIG_MALI=m
+CONFIG_MALI400=m
 
 #
 # AMLOGIC DVB driver
