@@ -821,6 +821,31 @@ config ARCH_OMAP
 
 endchoice
 
+config ARCH_MESON_A9_FREQ_LOCK
+	bool "Lock maximum A9 CPU Frequency"
+	depends on ARCH_MESON
+	help
+	  Lock maximum CPU frequency no matter which board is selected
+
+choice
+	prompt "Frequency"
+	depends on ARCH_MESON_A9_FREQ_LOCK
+	default ARCH_MESON_A9_FREQ_750
+
+config ARCH_MESON_A9_FREQ_750
+	bool "750 MHz"
+
+config ARCH_MESON_A9_FREQ_800
+	bool "800 MHz"
+
+config ARCH_MESON_A9_FREQ_850
+	bool "850 MHz"
+
+config ARCH_MESON_A9_FREQ_900
+	bool "900 MHz"
+
+endchoice
+
 config XBMC_BUILD
 	bool "This is kernel for Linux XBMC"
 	depends on ARCH_MESON
